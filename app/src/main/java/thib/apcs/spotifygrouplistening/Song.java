@@ -4,12 +4,13 @@ package thib.apcs.spotifygrouplistening;
  * Created by iancostello on 5/5/16.
  */
 public class Song {
-    private String songURI;
+    private String songID;
     private String songName;
     private String artist;
+    public static final String API_ACCESS_STRING = "spotify:track:";
 
-    public Song(String songURI, String songName, String artist) {
-        this.songURI = songURI;
+    public Song(String songID, String songName, String artist) {
+        this.songID = songID;
         this.songName = songName;
         this.artist = artist;
     }
@@ -18,8 +19,9 @@ public class Song {
         return songName + " by " + artist;
     }
 
-    public String getSongURI() { return songURI; }
-    public String getSongName() { return songName; }
+    public String getPlayableURI() { return API_ACCESS_STRING + songID; }
+    public String getSongURI() { return songID; }
+    public String getSongName() { return songID; }
     public String getArtist() { return artist; }
 
 }
