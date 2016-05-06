@@ -6,6 +6,7 @@ import android.util.JsonReader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -28,70 +29,16 @@ public class SpotifyAPIHandler {
 
     }
 
-    public static void search(String[] terms) {
-        //Allow Networking in Main Thread
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        //Init Local Vars
-        ArrayList<Song> songs = new ArrayList<Song>();
-        ByteBuffer searchUrl = new ByteBuffer();
-
-        //Init Search URL with basic request info
-        String urlToSearch = searchString;
-
-        //Add each search term with spaces indicated by '+'
-        for (String s: terms) {
-            urlToSearch += s + "+";
-        }
-
-        //Specifies that only tracks should be returned
-        urlToSearch += "&type=track"; //TODO Should return artists?
-
-        try {
-            //Make an GET request to spotify
-            searchUrl.readURL(new URL(urlToSearch));
-
-            //Get initial JSON Object
-            JSONObject all = new JSONObject(searchUrl.toString());
-
-            //Get track overarching list
-            JSONObject tracks = new JSONObject("tracks");
-
-            //Get JSON array, which contains each search term in a list
-            JSONArray allTracks = tracks.getJSONArray("items");
-
-            //Loop Through Each Track
-            for (int i=0; i < allTracks.length(); i+=1) {
-                //Get Track
-                JSONObject track = allTracks.getJSONObject(i);
-                String trackName = track.getString("name");
-
-                //Get Artist
-                JSONObject artist = track.getJSONArray("artists").getJSONObject(0);
-                String artistName = artist.getString("name");
-
-                //Get Spotify URI
-                String id = track.getString("id");
-                songs.add(new Song(id, trackName, trackName));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //Print each returned song to console
-        //TODO actually populate an array with this info
-        for (Song song: songs) {
-            System.out.println();
-        }
-
+    public void search(String[] terms) {
+        Thread thread = new Search(terms);
+        thread.start();
     }
 
     /** search
      * Aux function that allows for a raw string to be inputted and separates each work
      * @param s
      */
-    public static void search(String s) {
+    public void search(String s) {
         //Get Num Spaces to Init Array to right size
         int spaces = 0;
         for (int i = 0; i < s.length(); i+=1) {
@@ -119,6 +66,76 @@ public class SpotifyAPIHandler {
 
         //Pass on terms
         search(terms);
+    }
+
+    public class Search extends Thread {
+        String[] terms;
+
+        public Search (String[] terms) {
+            this.terms = terms;
+        }
+
+        public void run() {
+            //Suppress Main Thread Networking Exception
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+
+            //Init Local Vars
+            ArrayList<Song> songs = new ArrayList<Song>();
+            ByteBuffer searchUrl = new ByteBuffer();
+
+            //Init Search URL with basic request info
+            String urlToSearch = searchString;
+
+            //Add each search term with spaces indicated by '+'
+            for (String s: terms) {
+                urlToSearch += s + "+";
+            }
+
+            //Specifies that only tracks should be returned
+            urlToSearch += "&type=track"; //TODO Should return artists?
+
+            try {
+                //Make an GET request to spotify
+                searchUrl.readURL(new URL(urlToSearch));
+
+                //Get initial JSON Object
+                //JSONObject all = new JSONObject(searchUrl.toString());
+                JSONTokener all = new JSONTokener(searchUrl.toString());
+
+                //Get track overarching list
+                //JSONObject tracks = new JSONObject("tracks");
+                JSONObject all2 = (JSONObject) all.nextValue();
+                JSONObject tracks = all2.getJSONObject("tracks");
+
+                //Get JSON array, which contains each search term in a list
+                JSONArray allTracks = tracks.getJSONArray("items");
+                //   JSONArray allTracks = new JSONArray(searchUrl.toString());
+
+                //Loop Through Each Track
+                for (int i=0; i < allTracks.length(); i+=1) {
+                    //Get Track
+                    JSONObject track = allTracks.getJSONObject(i);
+                    String trackName = track.getString("name");
+
+                    //Get Artist
+                    JSONObject artist = track.getJSONArray("artists").getJSONObject(0);
+                    String artistName = artist.getString("name");
+
+                    //Get Spotify URI
+                    String id = track.getString("id");
+                    songs.add(new Song(id, trackName, artistName));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //Praint each returned song to console
+            //TODO actually populate an array with this info
+            for (Song song: songs) {
+                System.out.println();
+            }
+        }
     }
 
 }

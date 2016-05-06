@@ -29,6 +29,8 @@ public class SpotifyConnect extends AppCompatActivity  implements
     private Player musicPlayer;
     //Mock Server
     MockServer server;
+    //API
+    SpotifyAPIHandler apiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,7 @@ public class SpotifyConnect extends AppCompatActivity  implements
 
         //Init "server"
         server = new MockServer();
+        apiHandler = new SpotifyAPIHandler();
 
     }
 
@@ -60,9 +63,9 @@ public class SpotifyConnect extends AppCompatActivity  implements
     }
 
     public void playNextSong(View view) {
-        Group group = server.getGroup("Menlo");
-        musicPlayer.play(group.getCurrentSongURI());
-        //SpotifyAPIHandler.search("Panda");
+        //Group group = server.getGroup("Menlo");
+        //musicPlayer.play(group.getCurrentSongURI());
+        apiHandler.search("Panda");
     }
 
     /** onActivityResult
