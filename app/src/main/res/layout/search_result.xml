@@ -6,7 +6,6 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/albumCover"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"/>
 
@@ -16,7 +15,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/defaultSongTitle"
         android:id="@+id/songTitle"
-        android:layout_alignLeft="@id/albumCover"
         android:layout_alignParentTop="true"/>
 
     <TextView

@@ -41,17 +41,18 @@ import me.iancostello.util.ByteBuffer;
  */
 public class SpotifyAPIHandler {
     private static final String searchString = "https://api.spotify.com/v1/search?q=";
+    private static final String getString = "https://api.spotify.com/v1/tracks/";
 
     public void run() {
 
     }
 
-    public void updatePlayer(final View view, final String spotifyURI) {
+    public static void updatePlayer(final View view, final String spotifyURI) {
         new Thread(new Runnable() {
             public void run() {
                 try {
                     //Get Spotify URI
-                    String uri = spotifyURI.substring(spotifyURI.indexOf("k:")+1, spotifyURI.length());
+                    String uri = getString + spotifyURI.substring(spotifyURI.indexOf("k:")+2, spotifyURI.length());
 
                     //Init Bytebuffer
                     ByteBuffer searchUrl = new ByteBuffer();
@@ -60,16 +61,15 @@ public class SpotifyAPIHandler {
                     searchUrl.readURL(new URL(uri));
 
                     //Get initial JSON Object
-                    JSONTokener all = new JSONTokener(searchUrl.toString());
+                    JSONObject track = new JSONObject(searchUrl.toString());
 
                     //Get the track
-                    JSONObject all2 = (JSONObject) all.nextValue();
-                    JSONObject track = all2.getJSONObject("album");
+                    JSONObject album = track.getJSONObject("album");
 
                     //Get Necessary Objects
                     final String title = track.getString("name");
                     final String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
-                    final String albumUrl = track.getJSONArray("images").getString(2);
+                    final String albumUrl = album.getJSONArray("images").getString(2);
 
                     //Load the album cover
                     final Bitmap bitmap = loadImage(albumUrl);
@@ -78,13 +78,13 @@ public class SpotifyAPIHandler {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            ImageView cover = (ImageView) view.findViewById(R.id.albumCover);
+                            ImageView cover = (ImageView) view.findViewById(R.id.playerAlbumCover);
                             cover.setImageBitmap(bitmap);
 
-                            TextView titleView = (TextView) view.findViewById(R.id.song);
+                            TextView titleView = (TextView) view.findViewById(R.id.playerSong);
                             titleView.setText(title);
 
-                            TextView artistView = (TextView) view.findViewById(R.id.artist);
+                            TextView artistView = (TextView) view.findViewById(R.id.playerArtist);
                             titleView.setText(artistName);
                         }
                     });
@@ -95,7 +95,7 @@ public class SpotifyAPIHandler {
         }).start();
     }
 
-    public Bitmap loadImage(String urlSrc) {
+    public static Bitmap loadImage(String urlSrc) {
         try {
             //Establish URL Connection
             URL url = new URL(urlSrc);
@@ -214,13 +214,9 @@ public class SpotifyAPIHandler {
                     JSONObject artist = track.getJSONArray("artists").getJSONObject(0);
                     String artistName = artist.getString("name");
 
-                    //Get Album Cover
-                    //String url = track.getJSONArray("images").getString(2);
-                    String url = "";
-
                     //Get Spotify URI
                     String id = track.getString("id");
-                    songs[i] = (new Song(id, trackName, artistName, url));
+                    songs[i] = (new Song(id, trackName, artistName));
                 }
 
                 System.out.println("DONE LOADING FROM NETWORK");

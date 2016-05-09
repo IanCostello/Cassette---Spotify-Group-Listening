@@ -29,6 +29,8 @@ public class SearchActivity extends AppCompatActivity {
         fbServer = new Firebase("https://resplendent-inferno-2383.firebaseio.com/");
         musicPlayer = StorageManager.getPlayer();
         myGroup = StorageManager.getGroup();
+        setTitle("Cassette - " + myGroup);
+
     }
 
     public void onSearchClicked(View view) {

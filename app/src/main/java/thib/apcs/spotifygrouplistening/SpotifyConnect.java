@@ -1,5 +1,6 @@
 package thib.apcs.spotifygrouplistening;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -21,7 +23,7 @@ import com.spotify.sdk.android.player.Spotify;
 
 import java.io.Serializable;
 
-public class SpotifyConnect extends AppCompatActivity  implements
+public class SpotifyConnect extends AppCompatActivity implements
         PlayerNotificationCallback, ConnectionStateCallback {
 
     // Client ID
@@ -53,7 +55,7 @@ public class SpotifyConnect extends AppCompatActivity  implements
      * Created by
      * @param view
      */
-    public void loginOnClick(View view ) {
+    public void loginOnClick(View view) {
         //Create the Authentication Request Builder
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -65,16 +67,6 @@ public class SpotifyConnect extends AppCompatActivity  implements
 
         //Send the request
         AuthenticationClient.openLoginActivity(this, LOGIN_REQUEST_CODE, request);
-    }
-
-    public void goToSearch(View view) {
-        Intent intent = new Intent(this, ListeningActivity.class);
-        startActivity(intent);
-    }
-
-    public void goToMain(View view) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
     }
 
     /** onActivityResult
@@ -104,6 +96,7 @@ public class SpotifyConnect extends AppCompatActivity  implements
                         Log.e("Connect Activity", "Player not initialized: " + throwable.getMessage());
                     }
                 });
+
             }
         }
     }
@@ -112,6 +105,10 @@ public class SpotifyConnect extends AppCompatActivity  implements
     @Override
     public void onLoggedIn() {
         Log.d("Spotify User Info", "User logged in");
+        if (musicPlayer!=null) {
+            Intent intent2 = new Intent(this, ListeningActivity.class);
+            startActivity(intent2);
+        }
     }
 
     @Override
@@ -122,11 +119,15 @@ public class SpotifyConnect extends AppCompatActivity  implements
     @Override
     public void onLoginFailed(Throwable error) {
         Log.d("Spotify User Info", "Login failed");
+        Toast toast = Toast.makeText(getApplicationContext(), "Login Failed!", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override
     public void onTemporaryError() {
         Log.d("Spotify User Info", "Oops! Temporary error occurred");
+        Toast toast = Toast.makeText(getApplicationContext(), "Oops! Temporary error occurred", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override
