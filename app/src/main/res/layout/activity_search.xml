@@ -13,24 +13,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:id="@+id/editText"
-        android:layout_marginRight="75dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/button3" />
+        android:layout_marginTop="78dp"
+        android:layout_below="@+id/searchButton"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search"
-        android:id="@+id/button3"
+        android:id="@+id/searchButton"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignEnd="@id/editText"/>
+        android:layout_alignEnd="@+id/listView"
+        android:onClick="onSearchClicked"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:ems="10"
+        android:id="@+id/searchField"
+        android:layout_alignTop="@+id/searchButton"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/searchButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:id="@+id/songPlayer"
+        android:onClick="playSong"
+        android:layout_below="@+id/searchField"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

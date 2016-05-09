@@ -1,11 +1,14 @@
 package thib.apcs.spotifygrouplistening;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
+import com.firebase.client.Firebase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -15,6 +18,8 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
+
+import java.io.Serializable;
 
 public class SpotifyConnect extends AppCompatActivity  implements
         PlayerNotificationCallback, ConnectionStateCallback {
@@ -26,11 +31,13 @@ public class SpotifyConnect extends AppCompatActivity  implements
     // Verify integrity of request
     private static final int LOGIN_REQUEST_CODE = 3013;
     //Spotify User
-    private Player musicPlayer;
-    //Mock Server
-    MockServer server;
+    public static Player musicPlayer;
+
+    //Group
+    String myGroup = "Menlo";
     //API
     SpotifyAPIHandler apiHandler;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +45,6 @@ public class SpotifyConnect extends AppCompatActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spotify_connect);
 
-        //Init "server"
-        server = new MockServer();
         apiHandler = new SpotifyAPIHandler();
 
     }
@@ -62,10 +67,14 @@ public class SpotifyConnect extends AppCompatActivity  implements
         AuthenticationClient.openLoginActivity(this, LOGIN_REQUEST_CODE, request);
     }
 
-    public void playNextSong(View view) {
-        //Group group = server.getGroup("Menlo");
-        //musicPlayer.play(group.getCurrentSongURI());
-        apiHandler.search("Panda");
+    public void goToSearch(View view) {
+        Intent intent = new Intent(this, ListeningActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToMain(View view) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
     }
 
     /** onActivityResult
@@ -80,13 +89,14 @@ public class SpotifyConnect extends AppCompatActivity  implements
             //Get the response
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config musicPlayerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
+                final Config musicPlayerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 Spotify.getPlayer(musicPlayerConfig, this, new Player.InitializationObserver() {
                     @Override
                     public void onInitialized(Player player) {
                         musicPlayer = player;
                         musicPlayer.addConnectionStateCallback(SpotifyConnect.this);
                         musicPlayer.addPlayerNotificationCallback(SpotifyConnect.this);
+                        StorageManager.setPlayer(musicPlayer);
                     }
 
                     @Override

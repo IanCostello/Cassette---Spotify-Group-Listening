@@ -17,6 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 repositories {
@@ -28,6 +35,9 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    //Firebase Database
+    compile 'com.firebase:firebase-client-android:2.5.2'
+
     // Spotify authentication and authorization
     //NOTE RELEASE APPLICATION WILL HAVE TO GENERATE NEW AUTH TOKEN FOUND: https://developer.spotify.com/technologies/spotify-android-sdk/tutorial/
     compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
@@ -37,5 +47,5 @@ dependencies {
 
     //Other Dependencies
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.3.0'
 }

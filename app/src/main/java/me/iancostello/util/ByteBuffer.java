@@ -40,6 +40,16 @@ public class ByteBuffer {
         buf = s.getBytes();
     }
 
+    public ByteBuffer(URL url) {
+        start = end = 0;
+        buf = NULL_BUF;
+        try {
+            readURL(url);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** init
      * Initializes a buffer
      * @param byte[] buf2

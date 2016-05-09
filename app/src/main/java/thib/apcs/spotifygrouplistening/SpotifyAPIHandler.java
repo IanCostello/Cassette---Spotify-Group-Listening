@@ -1,13 +1,30 @@
 package thib.apcs.spotifygrouplistening;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.util.JsonReader;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.w3c.dom.Text;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,8 +46,84 @@ public class SpotifyAPIHandler {
 
     }
 
-    public void search(String[] terms) {
-        Thread thread = new Search(terms);
+    public void updatePlayer(final View view, final String spotifyURI) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    //Get Spotify URI
+                    String uri = spotifyURI.substring(spotifyURI.indexOf("k:")+1, spotifyURI.length());
+
+                    //Init Bytebuffer
+                    ByteBuffer searchUrl = new ByteBuffer();
+
+                    //Make an GET request to spotify
+                    searchUrl.readURL(new URL(uri));
+
+                    //Get initial JSON Object
+                    JSONTokener all = new JSONTokener(searchUrl.toString());
+
+                    //Get the track
+                    JSONObject all2 = (JSONObject) all.nextValue();
+                    JSONObject track = all2.getJSONObject("album");
+
+                    //Get Necessary Objects
+                    final String title = track.getString("name");
+                    final String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
+                    final String albumUrl = track.getJSONArray("images").getString(2);
+
+                    //Load the album cover
+                    final Bitmap bitmap = loadImage(albumUrl);
+
+                    //Update Everything on UI Thread
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ImageView cover = (ImageView) view.findViewById(R.id.albumCover);
+                            cover.setImageBitmap(bitmap);
+
+                            TextView titleView = (TextView) view.findViewById(R.id.song);
+                            titleView.setText(title);
+
+                            TextView artistView = (TextView) view.findViewById(R.id.artist);
+                            titleView.setText(artistName);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public Bitmap loadImage(String urlSrc) {
+        try {
+            //Establish URL Connection
+            URL url = new URL(urlSrc);
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+
+            //Ensure Good Connection
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode != HttpsURLConnection.HTTP_OK) {
+                return null;
+            }
+
+            //Read The Stream
+            InputStream in = null;
+            in = urlConnection.getInputStream();
+
+            //Decode the Stream
+            Bitmap myBitmap = BitmapFactory.decodeStream(in);
+
+            //Return
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
+    }
+
+    public void search(String[] terms, Song[] songs) {
+        Thread thread = new Search(terms, songs);
         thread.start();
     }
 
@@ -38,7 +131,7 @@ public class SpotifyAPIHandler {
      * Aux function that allows for a raw string to be inputted and separates each work
      * @param s
      */
-    public void search(String s) {
+    public void search(String s, Song[] songs) {
         //Get Num Spaces to Init Array to right size
         int spaces = 0;
         for (int i = 0; i < s.length(); i+=1) {
@@ -65,14 +158,16 @@ public class SpotifyAPIHandler {
         terms[count] = s.substring(start, s.length());
 
         //Pass on terms
-        search(terms);
+        search(terms, songs);
     }
 
     public class Search extends Thread {
         String[] terms;
+        Song[] songs;
 
-        public Search (String[] terms) {
+        public Search (String[] terms, Song[] songs) {
             this.terms = terms;
+            this.songs = songs;
         }
 
         public void run() {
@@ -81,7 +176,6 @@ public class SpotifyAPIHandler {
             StrictMode.setThreadPolicy(policy);
 
             //Init Local Vars
-            ArrayList<Song> songs = new ArrayList<Song>();
             ByteBuffer searchUrl = new ByteBuffer();
 
             //Init Search URL with basic request info
@@ -100,11 +194,9 @@ public class SpotifyAPIHandler {
                 searchUrl.readURL(new URL(urlToSearch));
 
                 //Get initial JSON Object
-                //JSONObject all = new JSONObject(searchUrl.toString());
                 JSONTokener all = new JSONTokener(searchUrl.toString());
 
                 //Get track overarching list
-                //JSONObject tracks = new JSONObject("tracks");
                 JSONObject all2 = (JSONObject) all.nextValue();
                 JSONObject tracks = all2.getJSONObject("tracks");
 
@@ -122,18 +214,18 @@ public class SpotifyAPIHandler {
                     JSONObject artist = track.getJSONArray("artists").getJSONObject(0);
                     String artistName = artist.getString("name");
 
+                    //Get Album Cover
+                    //String url = track.getJSONArray("images").getString(2);
+                    String url = "";
+
                     //Get Spotify URI
                     String id = track.getString("id");
-                    songs.add(new Song(id, trackName, artistName));
+                    songs[i] = (new Song(id, trackName, artistName, url));
                 }
+
+                System.out.println("DONE LOADING FROM NETWORK");
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-
-            //Praint each returned song to console
-            //TODO actually populate an array with this info
-            for (Song song: songs) {
-                System.out.println();
             }
         }
     }

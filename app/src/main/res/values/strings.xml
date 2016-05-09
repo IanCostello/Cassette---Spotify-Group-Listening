@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SpotifyGroupListening</string>
+    <string name="defaultSongTitle">Song</string>
 </resources>
