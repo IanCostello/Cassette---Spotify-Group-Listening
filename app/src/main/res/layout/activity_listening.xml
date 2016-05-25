@@ -4,70 +4,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/playBackground"
     tools:context="thib.apcs.spotifygrouplistening.ListeningActivity">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="446dp"
-        android:id="@+id/listView2"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:id="@+id/playerAlbumCover"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/player" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/playBackground"
+        android:layout_height="200dp"
         android:id="@+id/player"
-        android:padding="5dp"
-
         android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/cover"
-            android:id="@+id/playerAlbumCover"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Song Title"
+            android:text="No Song Playing!"
             android:id="@+id/playerSong"
+            android:textColor="@color/playColor"
             android:typeface="monospace"
-            android:layout_alignTop="@+id/playerAlbumCover"
-            android:layout_toEndOf="@+id/playerAlbumCover" />
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Artist Name"
+            android:text="Go To Search To Get Started"
+            android:textColor="@color/playColor"
             android:id="@+id/playerArtist"
             android:layout_below="@+id/playerSong"
-            android:layout_alignStart="@+id/playerSong" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/playButton"
-            android:src="@drawable/playbutton"
-            android:padding="5dp"
-            android:layout_marginRight="5dp"
-            android:onClick="playButtonClicked"
-            android:layout_alignBottom="@+id/playerAlbumCover"
-            android:layout_alignParentEnd="true" />
+            android:layout_centerHorizontal="true" />
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="100dp"
-            android:layout_height="5dp"
-            android:id="@+id/progressBar"
-            android:layout_marginBottom="6dp"
-            android:layout_alignParentBottom="true"
-            android:progress="50"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:id="@+id/songProgress"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_below="@+id/playerArtist"
-            android:layout_alignStart="@+id/playerArtist"
-            android:layout_toStartOf="@+id/playButton" />
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/playButton"
+            android:src="@drawable/ic_pause_circle_outline_black_48dp"
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
+            android:onClick="playButtonClicked"
+            android:layout_below="@+id/songProgress"
+            android:layout_centerHorizontal="true" />
+
+
     </RelativeLayout>
 </RelativeLayout>

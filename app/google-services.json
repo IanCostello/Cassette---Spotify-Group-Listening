@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "257855016418",
+    "firebase_url": "https://resplendent-inferno-2383.firebaseio.com",
+    "project_id": "resplendent-inferno-2383",
+    "storage_bucket": "resplendent-inferno-2383.firebaseio.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257855016418:android:3ad73489c77e455c",
+        "android_client_info": {
+          "package_name": "thib.apcs.spotifygrouplistening"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "257855016418-t2or4ocupdrkiqmr2tqjcb5ob9rab3tl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "thib.apcs.spotifygrouplistening",
+            "certificate_hash": "4433EC5FE4AC903C43F9F00D012D78FEA64EABFA"
+          }
+        },
+        {
+          "client_id": "257855016418-qou27gjufibksm5e9rhahjtl3if6rqmk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrYbEIvLLj7pGP5GYQJDGDqix-NlbYK-0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,6 +12,8 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +71,8 @@ public class SpotifyAPIHandler {
                     //Get Necessary Objects
                     final String title = track.getString("name");
                     final String artistName = track.getJSONArray("artists").getJSONObject(0).getString("name");
-                    final String albumUrl = album.getJSONArray("images").getString(2);
+                    final String albumUrl = album.getJSONArray("images").getJSONObject(0).getString("url");
+                    final int length = track.getInt("duration_ms");
 
                     //Load the album cover
                     final Bitmap bitmap = loadImage(albumUrl);
@@ -78,14 +81,21 @@ public class SpotifyAPIHandler {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            //Update Album
                             ImageView cover = (ImageView) view.findViewById(R.id.playerAlbumCover);
                             cover.setImageBitmap(bitmap);
 
+                            //Update Song Name
                             TextView titleView = (TextView) view.findViewById(R.id.playerSong);
                             titleView.setText(title);
 
+                            //Update Artist Name
                             TextView artistView = (TextView) view.findViewById(R.id.playerArtist);
-                            titleView.setText(artistName);
+                            artistView.setText(artistName);
+
+                            //Set Lenth of Song
+                            ProgressBar songProgress = (ProgressBar) view.findViewById(R.id.songProgress);
+                            songProgress.setMax(length);
                         }
                     });
                 } catch (Exception e) {
@@ -95,6 +105,11 @@ public class SpotifyAPIHandler {
         }).start();
     }
 
+    /** loadImage
+     * Loads an image from the internet into a bitmap
+     * @param urlSrc
+     * @return
+     */
     public static Bitmap loadImage(String urlSrc) {
         try {
             //Establish URL Connection
@@ -112,18 +127,24 @@ public class SpotifyAPIHandler {
             in = urlConnection.getInputStream();
 
             //Decode the Stream
-            Bitmap myBitmap = BitmapFactory.decodeStream(in);
+            Bitmap bitmapToReturn = BitmapFactory.decodeStream(in);
 
             //Return
-            return myBitmap;
+            return bitmapToReturn;
         } catch (IOException e) {
             // Log exception
             return null;
         }
     }
 
-    public void search(String[] terms, Song[] songs) {
-        Thread thread = new Search(terms, songs);
+    /** Aux Search Method
+     * @param context
+     * @param view
+     * @param terms
+     * @param songs
+     */
+    public void search(Context context, View view, String[] terms, Song[] songs) {
+        Thread thread = new Search(context, view, terms, songs);
         thread.start();
     }
 
@@ -131,7 +152,7 @@ public class SpotifyAPIHandler {
      * Aux function that allows for a raw string to be inputted and separates each work
      * @param s
      */
-    public void search(String s, Song[] songs) {
+    public void search(Context context, View view, String s, Song[] songs) {
         //Get Num Spaces to Init Array to right size
         int spaces = 0;
         for (int i = 0; i < s.length(); i+=1) {
@@ -158,14 +179,21 @@ public class SpotifyAPIHandler {
         terms[count] = s.substring(start, s.length());
 
         //Pass on terms
-        search(terms, songs);
+        search(context, view, terms, songs);
     }
 
+    /** Search Class
+     * Handles getting info from spotify api
+     */
     public class Search extends Thread {
         String[] terms;
         Song[] songs;
+        View view;
+        Context context;
 
-        public Search (String[] terms, Song[] songs) {
+        public Search (Context context, View view, String[] terms, Song[] songs) {
+            this.context = context;
+            this.view = view;
             this.terms = terms;
             this.songs = songs;
         }
@@ -214,15 +242,27 @@ public class SpotifyAPIHandler {
                     JSONObject artist = track.getJSONArray("artists").getJSONObject(0);
                     String artistName = artist.getString("name");
 
+                    //Get Album
+                    String albumName = track.getJSONObject("album").getString("name");
+
                     //Get Spotify URI
                     String id = track.getString("id");
-                    songs[i] = (new Song(id, trackName, artistName));
+                    songs[i] = (new Song(id, trackName, artistName, albumName));
                 }
 
                 System.out.println("DONE LOADING FROM NETWORK");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            //Update Everything on UI Thread
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    ListView listView = (ListView) view.findViewById(R.id.searchListView);
+                    listView.setAdapter(new SongAdapter(context, songs));
+                }
+            });
         }
     }
 

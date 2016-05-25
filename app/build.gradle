@@ -36,7 +36,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Firebase Database
-    compile 'com.firebase:firebase-client-android:2.5.2'
+    compile 'com.google.firebase:firebase-core:9.0.0'
+    compile 'com.google.firebase:firebase-database:9.0.0'
+    compile 'com.google.firebase:firebase-auth:9.0.0'
+    compile 'com.google.firebase:firebase-messaging:9.0.0'
 
     // Spotify authentication and authorization
     //NOTE RELEASE APPLICATION WILL HAVE TO GENERATE NEW AUTH TOKEN FOUND: https://developer.spotify.com/technologies/spotify-android-sdk/tutorial/
@@ -49,3 +52,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.+'
 }
+
+apply plugin: 'com.google.gms.google-services'
+

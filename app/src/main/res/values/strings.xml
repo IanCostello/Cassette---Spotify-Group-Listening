@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpotifyGroupListening</string>
+    <string name="app_name">Cassette</string>
     <string name="defaultSongTitle">Song</string>
     <string name="appDescriptionTop">Login With Spotify</string>
     <string name="appDescription">To Get Started With Cassette</string>

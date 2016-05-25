@@ -1,16 +1,20 @@
 package thib.apcs.spotifygrouplistening;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -106,7 +110,7 @@ public class SpotifyConnect extends AppCompatActivity implements
     public void onLoggedIn() {
         Log.d("Spotify User Info", "User logged in");
         if (musicPlayer!=null) {
-            Intent intent2 = new Intent(this, ListeningActivity.class);
+            Intent intent2 = new Intent(this, GroupActivity.class);
             startActivity(intent2);
         }
     }

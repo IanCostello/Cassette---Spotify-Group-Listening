@@ -22,5 +22,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
-        android:id="@+id/textView2" />
+        android:id="@+id/textView2"
+        android:layout_below="@+id/songTitle"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
