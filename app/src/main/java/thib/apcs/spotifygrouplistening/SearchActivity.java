@@ -8,9 +8,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 
 public class SearchActivity extends AppCompatActivity {
@@ -71,8 +72,11 @@ public class SearchActivity extends AppCompatActivity {
         //Ensure valid then update server
         if (song != null) {
             String playableURI = song.getPlayableURI();
-            DatabaseReference songRef = fbServer.getReference("groups/"+myGroup+"/playableURI");
-            songRef.setValue(playableURI);
+            DatabaseReference songRef = fbServer.getReference("groups/"+myGroup+"/queue");
+            ListeningActivity.songsInQueue.add(playableURI);
+            songRef.setValue(ListeningActivity.songsInQueue);
+            Toast.makeText(SearchActivity.this, "Song Added To Queue!",
+                    Toast.LENGTH_LONG).show();
         }
     }
 }

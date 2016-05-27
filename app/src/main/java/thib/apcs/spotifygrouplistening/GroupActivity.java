@@ -33,6 +33,7 @@ public class GroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fbServer = FirebaseDatabase.getInstance();
+        setContentView(R.layout.activity_group);
     }
 
     public void onCreateGroup(View view) {
@@ -79,7 +80,7 @@ public class GroupActivity extends AppCompatActivity {
                     Intent intent2 = new Intent(GroupActivity.this, ListeningActivity.class);
                     startActivity(intent2);
                 } else {
-                    Toast.makeText(GroupActivity.this, "Incorrect Password or nonexistent group!",
+                    Toast.makeText(GroupActivity.this, "That Group Doesn't Exist!",
                             Toast.LENGTH_LONG).show();
                 }
             }

@@ -9,6 +9,7 @@ public class StorageManager {
     private static Player mainPlayer;
     private static String myGroup = "Menlo"; //TODO implement properly
 
+
     /** Getters and Setters */
     public static void setPlayer(Player musicPlayer) {
         mainPlayer = musicPlayer;
